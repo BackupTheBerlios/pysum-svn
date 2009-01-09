@@ -1,3 +1,9 @@
+2009-01-08  Daniel Fuentes B. <dbfuentes@gmail com>
+
+	* Working on branches/experimental: the "check" windows partially work(r09)
+	* src/pysum.py: Update code. Working in the "check" windows
+	* src/pysum.glade: Update the Glade file
+
 2008-09-17  Daniel Fuentes B. <dbfuentes@gmail com>
 
 	* Working on branches/experimental: Some things do not work (rev08 svn)

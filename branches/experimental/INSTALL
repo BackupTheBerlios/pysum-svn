@@ -1,17 +1,17 @@
 Installation Instructions
 *************************
 
---------------
+---------------
 Debian package
---------------
+---------------
 
 if you use debian, ubuntu, or some other similar distribution, install pysum
 using the .deb package (available on the project page)
 
 
------------
-Manual use
------------
+-------------------
+Manual Installation
+-------------------
 
 == Depends ==
 
@@ -31,7 +31,7 @@ $ python pysum.py
 Copy the files in /src to the directory where you want (for example in your home,
  in usr/share, etc.)
 
-Note: The *.glade file must be in the same directory as pysum.py
+Note: The *.glade files must be in the same directory as pysum.py
 
 == Translations ==
 

@@ -19,6 +19,15 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
+###### START EDIT HERE ###########
+
+# Directory with the files 
+resources_dir = "/usr/share/pysum"
+
+
+###### STOP START EDIT HERE ######
+
+
 # Importamos los modulos necesarios
 import md5
 import gettext
@@ -29,10 +38,6 @@ pygtk.require('2.0')
 import gtk
 import gtk.glade
 
-# directorio con los archivos necesarios
-
-resources_dir = "/usr/share/pysum"
-
 # Algunas cosas para gettext (i18n - traducciones)
 
 _ = gettext.gettext
@@ -41,26 +46,25 @@ gettext.textdomain("pysum")
 gtk.glade.textdomain("pysum")
 
 # Clase con la informacion del programa (para no escribir tanto)
-
 class Pysum:
     "Store the program information"
     name = "pySum"
-    version = "svn rev 8"
-    copyright = "Copyright © 2008 Daniel Fuentes B."
+    version = "svn (rev 9)"
+    copyright = "Copyright © 2008 Daniel Fuentes Barría"
     authors = ["Daniel Fuentes Barría <dbfuentes@gmail.com>"]
     website = "http://pysum.berlios.de/"
-    description = _("A pygtk application for create and verify md5 and other checksum")
-    license = "This program is free software; you can redistribute it and/or modify \
-it under the terms of the GNU General Public License as published by \
-the Free Software Foundation; either version 2 of the License, or \
-(at your option) any later version. \n\n\
-This program is distributed in the hope that it will be useful, but \
-WITHOUT ANY WARRANTY; without even the implied warranty of \
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. \
-See the GNU General Public License for more details. \n\n\
-You should have received a copy of the GNU General Public License \
-along with this program; if not, write to the Free Software Foundation, Inc., \
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA."
+    description = _("A pygtk application for create and verify md5 and other \
+checksum")
+    license = "This program is free software; you can redistribute it and/or \
+modify it under the terms of the GNU General Public License as published by \
+the Free Software Foundation; either version 2 of the License, or (at your \
+option) any later version. \n\nThis program is distributed in the hope that \
+it will be useful, but WITHOUT ANY WARRANTY; without even the implied \
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. \
+See the GNU General Public License for more details. \n\nYou should have \
+received a copy of the GNU General Public License along with this program; \
+if not, write to the Free Software Foundation, Inc., 51 Franklin Street, \
+Fifth Floor, Boston, MA 02110-1301, USA."
 
 
 # Definimos una funcion para obtener la suma md5 de los archivos
@@ -104,7 +108,7 @@ def listasumas(filename):
     fichero.close()
     return lista
 
-# Interfaz grafica (gtk-glade)
+# La Interfaz grafica (gtk-glade)
 # Clase para el Loop principal (de la interfaz grafica)
 
 class Gui:
@@ -121,7 +125,9 @@ class Gui:
         # y sus respectivas llamadas.
         signals = {
                    "on_buttonopen1_clicked" : self.on_buttonopen1_clicked,
+                   "on_buttonopen2_clicked" : self.on_buttonopen2_clicked,
                    "on_button2_clicked" : self.on_button2_clicked,
+                   "on_button3_clicked" : self.on_button3_clicked,
                    "on_about1_activate" : self.on_about1_activate,
                    "gtk_main_quit" : gtk.main_quit,
                    }
@@ -130,14 +136,21 @@ class Gui:
         self.widgets.signal_autoconnect(signals)
 
         # Del archivo glade obtenemos los widgets a usar.
+        # widgets de la pestaña para comprobar el hash
         self.entry1 = self.widgets.get_widget("entry1")
 
-        # widgests de la ventana de comprobacion
+        # widgets de la ventana para obtener el hash
+        self.entry2 = self.widgets.get_widget("entry2")
+        self.textview1 = self.widgets.get_widget("textview1")
+
+        # widgets de la ventana de comprobacion
         self.checkwindow = self.widgets.get_widget("checkwindow")
         self.labeldialog1 = self.widgets.get_widget("labeldialog1")
         self.labeldialog2 = self.widgets.get_widget("labeldialog2")
         self.labeldialog3 = self.widgets.get_widget("labeldialog3")
         self.labeldialog4 = self.widgets.get_widget("labeldialog4")
+
+
 
 # De aqui en adelante comienza las acciones propias del programa
 # Como las ventanas especiales y las acciones a realizar
@@ -171,7 +184,7 @@ class Gui:
         dialog_error.destroy()
 
     # Ventana Acerca de.
-    def about_info(self,data=None):
+    def about_info(self, data=None):
         "Display the About dialog "
         about = gtk.AboutDialog()
         about.set_name(Pysum.name)
@@ -179,7 +192,7 @@ class Gui:
         about.set_comments(Pysum.description)
         about.set_copyright(Pysum.copyright)
 
-        def openHomePage(widget,url,url2): #para abrir el sitio
+        def openHomePage(widget,url,url2): # para abrir el sitio
             import webbrowser
             webbrowser.open_new(url)
 
@@ -187,7 +200,7 @@ class Gui:
         about.set_website(Pysum.website)
         about.set_authors(Pysum.authors)
         about.set_license(Pysum.license)
-        about.set_wrap_license(True) #Adapta el texto a la ventana
+        about.set_wrap_license(True) # Adapta el texto a la ventana
         about.run()
         about.destroy()
 
@@ -199,25 +212,26 @@ class Gui:
         miss = 0
         self.checkwindow.show()
         for arch in files:
+            # Ahora se muestra el progreso
             progreso = progreso + 1
             total = "Check file %s of %s" % (progreso, len(files)) 
             self.labeldialog1.set_text(total)
             try:
-#Nota: son de la forma arch = [nombre(0), suma(1), ruta_completa(2)]
+            # Son de la forma arch = [nombre(0), suma(1), ruta_completa(2)]
                 if (getmd5(arch[2])) == (arch[1]):
                     good = good + 1
-                    print "%s  %s  OK" % (arch[1], arch[0])
+                    print "%s  OK %s" % (arch[0], arch[1])
                     self.labeldialog2.set_text(str(good))
                 elif (getmd5(arch[2])) != (arch[1]):
                     bad = bad +1
-                    print "%s  %s  Bad" % (arch[1], arch[0])
+                    print "%s  Bad" % (arch[0])
                     self.labeldialog3.set_text(str(bad))
             except:
                 miss = miss +1
                 print "%s  Missing (the file could not be read)"  % (arch[0])
                 self.labeldialog4.set_text(str(miss))
             
-# le devolvemos temporalmente el control a gtk para refrescar la ventana
+# Le devolvemos temporalmente el control a gtk para refrescar la ventana
 # Mas info en: http://faq.pygtk.org/index.py?req=show&file=faq23.020.htp
             while gtk.events_pending():
                 gtk.main_iteration(False)
@@ -230,20 +244,37 @@ class Gui:
         self.about_info()
 
     # Definimos las acciones de los botones:
+    # botones de la pestaña de comprobacion (check)
     def on_buttonopen1_clicked(self, widget):# Boton abrir
         ruta_archivo = self.file_browse() 
         self.entry1.set_text(ruta_archivo)
 
-    def on_button2_clicked(self, widget): #Boton para iniciar comprobacion
-        archivo = self.entry1.get_text() #obtiene la ruta desde la entrada
+    def on_button2_clicked(self, widget): # Boton para iniciar comprobacion
+        archivo = self.entry1.get_text() # obtiene la ruta desde la entrada
         if (len(archivo) == 0):
             self.error(_("Please choose a file"))
         else:
             try:
                 milista = listasumas(archivo)
-                self.check_win(milista) #mostral la ventana de chequeo
+                self.check_win(milista) # mostral la ventana de chequeo
             except:
                 self.error(_("Can't open the file: ") + archivo)
+    # botones de la pestaña de compronacion (check)
+    def on_buttonopen2_clicked(self, widget):# Boton abrir
+        ruta_archivo = self.file_browse() 
+        self.entry2.set_text(ruta_archivo)
+
+    def on_button3_clicked(self, widget): # Boton para obtener el hash
+        archivo = self.entry2.get_text() #obtiene la ruta desde la entrada
+        text_buffer=gtk.TextBuffer()
+        try:
+            text_buffer.set_text(str(getmd5(archivo)))#fija el hash en buffer
+        except:
+            if (len(archivo) == 0):
+                self.error(_("Please choose a file"))
+            else:
+                self.error(_("Can't open the file: ") + archivo)
+        self.textview1.set_buffer(text_buffer)
 
 if __name__== "__main__":
     Gui()
